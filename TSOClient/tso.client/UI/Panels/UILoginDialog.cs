@@ -16,7 +16,7 @@ namespace FSO.Client.UI.Panels
             this.Login = login;
             this.Caption = GameFacade.Strings.GetString("UIText", "209", "1");
 
-            SetSize(350, 290);
+            SetSize(350, 254);
 
             m_TxtAccName = UITextEdit.CreateTextBox();
             m_TxtAccName.X = 20;
@@ -39,8 +39,7 @@ namespace FSO.Client.UI.Panels
             m_TxtPass.OnEnterPress += new KeyPressDelegate(loginBtn_OnButtonClick);
             this.Add(m_TxtPass);
 
-            // Three uniform full-width buttons stacked in rows, aligned with the input fields (X=20, W=310):
-            // Login (primary) -> Create account (onboarding) -> Exit (leave).
+            // Smoky Hollow: two full-width buttons, Login then Exit. Accounts are made in the launcher.
             /** Login button **/
             var loginBtn = new UIButton
             {
@@ -56,26 +55,13 @@ namespace FSO.Client.UI.Panels
             var exitBtn = new UIButton
             {
                 X = 20,
-                Y = 242,
+                Y = 206,
                 Width = 310,
                 ID = "ExitButton",
                 Caption = GameFacade.Strings.GetString("UIText", "209", "3")
             };
             this.Add(exitBtn);
             exitBtn.OnButtonClick += new ButtonClickDelegate(exitBtn_OnButtonClick);
-
-            // In-client account creation (email -> 6-digit code -> username/password). Pre-fills this dialog's
-            // username field on success so the player can sign straight in.
-            var createBtn = new UIButton
-            {
-                X = 20,
-                Y = 206,
-                Width = 310,
-                ID = "CreateAccountButton",
-                Caption = "Create account"
-            };
-            this.Add(createBtn);
-            createBtn.OnButtonClick += _ => UIScreen.GlobalShowDialog(new UIRegistrationDialog(u => Username = u), true);
 
             this.Add(new UILabel
             {

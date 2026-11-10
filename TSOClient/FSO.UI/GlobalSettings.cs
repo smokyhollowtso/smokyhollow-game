@@ -7,7 +7,7 @@ namespace FSO.Client
 {
     public class GlobalSettings : IniConfig
     {
-        public override string HeadingComment => "OpenSO Settings File. Properties are self explanatory.";
+        public override string HeadingComment => "Smoky Hollow Settings File. Properties are self explanatory.";
         private static GlobalSettings defaultInstance;
 
         public static GlobalSettings Default
@@ -21,11 +21,12 @@ namespace FSO.Client
                         defaultInstance.DPIScaleFactor = 1; //sanity check
                     if (defaultInstance.ChatWindowsOpacity == 0 || defaultInstance.ChatWindowsOpacity > 1)
                         defaultInstance.ChatWindowsOpacity = 1; //sanity check
-                    // Rebrand: any old FreeSO API endpoint -> our OpenSO API.
-                    if (defaultInstance.GameEntryUrl == "http://api.freeso.org" || defaultInstance.GameEntryUrl == "https://api.freeso.org")
+                    // Smoky Hollow: any FreeSO/OpenSO API endpoint (or an empty one) -> the Smoky Hollow server.
+                    var entry = (defaultInstance.GameEntryUrl ?? "").Trim().TrimEnd('/');
+                    if (entry == "" || entry.Contains("api.freeso.org") || entry.Contains("api.openso.org"))
                     {
-                        defaultInstance.GameEntryUrl = "https://api.openso.org";
-                        defaultInstance.CitySelectorUrl = "https://api.openso.org";
+                        defaultInstance.GameEntryUrl = "http://smokyhollowtso.duckdns.org:9000";
+                        defaultInstance.CitySelectorUrl = "http://smokyhollowtso.duckdns.org:9000";
                         defaultInstance.Save();
                     }
 
@@ -134,8 +135,8 @@ namespace FSO.Client
 
             { "UseCustomServer", "true" },
             { "ModernCAS", "true" },
-            { "GameEntryUrl", "https://api.openso.org" },
-            { "CitySelectorUrl", "https://api.openso.org" },
+            { "GameEntryUrl", "http://smokyhollowtso.duckdns.org:9000" },
+            { "CitySelectorUrl", "http://smokyhollowtso.duckdns.org:9000" },
 
             { "TargetRefreshRate", "60" },
 

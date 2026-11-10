@@ -427,7 +427,7 @@ namespace FSO.Client
             var ds = kernel.Get<DataService>();
             ds.AddProvider(new ClientAvatarProvider());
 
-            this.Window.Title = "OpenSO";
+            this.Window.Title = "Smoky Hollow";
             DiscordRpcEngine.Init();
 
             if (!GlobalSettings.Default.Windowed && !GameFacade.GraphicsDeviceManager.IsFullScreen)

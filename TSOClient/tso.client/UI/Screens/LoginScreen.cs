@@ -131,18 +131,6 @@ namespace FSO.Client.UI.Screens
             this.Add(gameplayButton);
             gameplayButton.OnButtonClick += new ButtonClickDelegate(gameplayButton_OnButtonClick);
 
-            // Self-hosting a private server stays reachable (it uses the same embedded-server machinery as
-            // archive mode, just framed as a private server) now that archive mode isn't the default boot.
-            var hostButton = new UIButton()
-            {
-                Caption = "Host Private Server",
-                Y = 10,
-                Width = 190,
-                X = 145
-            };
-            this.Add(hostButton);
-            hostButton.OnButtonClick += (btn) => FSOFacade.Controller.InitializeArchive();
-
             Regulator.OnError += AuthRegulator_OnError;
             Regulator.OnTransition += AuthRegulator_OnTransition;
 

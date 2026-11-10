@@ -6,32 +6,32 @@
     <Nullable>disable</Nullable>
     <OutputType>WinExe</OutputType>
     <RootNamespace>FSO.Windows</RootNamespace>
-    <AssemblyName>OpenSO</AssemblyName>
+    <AssemblyName>SmokyHollow</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <UseWindowsForms>true</UseWindowsForms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PublishAot>false</PublishAot>
     <IsAotCompatible>false</IsAotCompatible>
     <TrimMode>partial</TrimMode>
-    <ApplicationIcon>openso.ico</ApplicationIcon>
+    <ApplicationIcon>smokyhollow.ico</ApplicationIcon>
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="openso.ico" />
+    <Content Include="smokyhollow.ico" />
   </ItemGroup>
 
   <PropertyGroup>
-    <ApplicationIcon>openso.ico</ApplicationIcon>
+    <ApplicationIcon>smokyhollow.ico</ApplicationIcon>
   </PropertyGroup>
   
   <ItemGroup>
-    <None Remove="openso.ico" />
+    <None Remove="smokyhollow.ico" />
     <None Remove="Icon.bmp" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="openso.ico">
+    <EmbeddedResource Include="smokyhollow.ico">
       <LogicalName>Icon.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Icon.bmp">

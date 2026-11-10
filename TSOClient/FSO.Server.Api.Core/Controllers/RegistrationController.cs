@@ -20,6 +20,17 @@ namespace FSO.Server.Api.Core.Controllers
     public class RegistrationController : ControllerBase
     {
         private const int REGISTER_THROTTLE_SECS = 60;
+        private const int MAX_ACCOUNTS_PER_CONNECTION = 2;
+
+        private static string HouseholdKey()
+        {
+            try
+            {
+                var path = System.IO.Path.Combine(System.AppContext.BaseDirectory, "household-key.txt");
+                return System.IO.File.Exists(path) ? System.IO.File.ReadAllText(path).Trim() : "";
+            }
+            catch { return ""; }
+        }
         private const int EMAIL_CONFIRMATION_EXPIRE = 2 * 60 * 60; // 2 hrs
         private const int RESEND_COOLDOWN_SECS = 60;            // min seconds between (re)sends of a code for one address
         // Durable, per-email windowed cap on verification-email SEND ATTEMPTS, layered on top of the fixed
@@ -133,7 +144,11 @@ namespace FSO.Server.Api.Core.Controllers
                 });
             }
 
-            if (!string.IsNullOrEmpty(api.Config.Regkey) && api.Config.Regkey != user.key)
+            // Smoky Hollow household key (household-key.txt next to the server): also accepted as an invite key,
+            // and lets a Ranger-approved extra player sign up past the per-home account limit.
+            var householdKey = HouseholdKey();
+            var usedHouseholdKey = householdKey.Length > 0 && user.key == householdKey;
+            if (!string.IsNullOrEmpty(api.Config.Regkey) && api.Config.Regkey != user.key && !usedHouseholdKey)
             {
                 return ApiResponse.Json(HttpStatusCode.OK, new RegistrationError()
                 {
@@ -165,6 +180,18 @@ namespace FSO.Server.Api.Core.Controllers
                     {
                         error = "registration_failed",
                         error_description = "registrations_too_frequent"
+                    });
+                }
+
+                // Smoky Hollow: two accounts per home connection. This only stops a new sign-up; it never
+                // bans or touches existing accounts. A Ranger can make extra accounts for a household by hand.
+                // Sign-ups from the server's own PC (127.0.0.1) don't count.
+                if (!usedHouseholdKey && ip != "127.0.0.1" && ip != "::1" && prev.Count >= MAX_ACCOUNTS_PER_CONNECTION)
+                {
+                    return ApiResponse.Json(HttpStatusCode.OK, new RegistrationError()
+                    {
+                        error = "registration_failed",
+                        error_description = "too_many_accounts"
                     });
                 }
 
@@ -446,6 +473,18 @@ namespace FSO.Server.Api.Core.Controllers
                     {
                         error = "registration_failed",
                         error_description = "registrations_too_frequent"
+                    });
+                }
+
+                // Smoky Hollow: two accounts per home connection. This only stops a new sign-up; it never
+                // bans or touches existing accounts. A Ranger can make extra accounts for a household by hand.
+                // Sign-ups from the server's own PC (127.0.0.1) don't count.
+                if (ip != "127.0.0.1" && ip != "::1" && prev.Count >= MAX_ACCOUNTS_PER_CONNECTION)
+                {
+                    return ApiResponse.Json(HttpStatusCode.OK, new RegistrationError()
+                    {
+                        error = "registration_failed",
+                        error_description = "too_many_accounts"
                     });
                 }
 

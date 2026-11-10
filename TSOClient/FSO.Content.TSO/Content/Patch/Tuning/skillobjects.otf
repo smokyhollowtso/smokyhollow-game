@@ -50,11 +50,11 @@
    </T>
 
    <T i="8192" n="Tuning - Skill Speed">
-      <K i="0" l="Base Speed [%]" v="10"></K>
+      <K i="0" l="Base Speed [%]" v="101"></K> <!-- Smoky Hollow: DramaSO feel + 1 (was 10) -->
       <K i="1" l="Payout Object Penalty [%x100]" v="-8000"></K>
-      <K i="2" l="Maximum Total Bonus [%]" v="99"></K>
+      <K i="2" l="Maximum Total Bonus [%]" v="181"></K> <!-- Smoky Hollow (was 99) -->
       <K i="3" l="Payout Object Base [%]" v="0"></K>
-      <K i="4" l="Skill Lot Multiplier (%x100)" v="120"></K>
+      <K i="4" l="Skill Lot Multiplier (%x100)" v="131"></K> <!-- Smoky Hollow (was 120) -->
    </T>
 
    <T i="8204" n="Tuning - Skill Motive Deltas">
@@ -132,14 +132,14 @@
 
    <T i="8198" n="Tuning - Skill Add Pal Eff - non-payout">
       <K i="0" l="0 pals" v="0"></K>
-      <K i="1" l="1 pals" v="12"></K>
-      <K i="2" l="2 pals" v="12"></K>
-      <K i="3" l="3 pals" v="22"></K>
-      <K i="4" l="4 pals" v="22"></K>
-      <K i="5" l="5 pals" v="7"></K>
+      <K i="1" l="1 pals" v="20"></K>
+      <K i="2" l="2 pals" v="15"></K>
+      <K i="3" l="3 pals" v="10"></K>
+      <K i="4" l="4 pals" v="5"></K>
+      <K i="5" l="5 pals" v="5"></K>
       <K i="6" l="max pal" v="5"></K>
-      <K i="7" l="max eff" v="6"></K>
-      <K i="8" l="NonSkillCatOtherPalsCap" v="3"></K>
+      <K i="7" l="max eff" v="5"></K>
+      <K i="8" l="NonSkillCatOtherPalsCap" v="5"></K>
    </T>
 
    <T i="8196" n="Tuning - Payout">
