@@ -24,7 +24,7 @@ namespace FSO.Unix
             var mgAssembly = typeof(Microsoft.Xna.Framework.Game).Assembly;
             var platform = mgAssembly.GetType("MonoGame.Framework.Utilities.PlatformInfo");
             var backend = platform?.GetProperty("GraphicsBackend")?.GetValue(null);
-            Console.WriteLine($"[OpenSO] MonoGame: {mgAssembly.GetName().Version} | Backend: {backend ?? "Unknown"}");
+            Console.WriteLine($"[Smoky Hollow] MonoGame: {mgAssembly.GetName().Version} | Backend: {backend ?? "Unknown"}");
 
             FSOEnvironment.Enable3D = true;
 
@@ -39,8 +39,8 @@ namespace FSO.Unix
 
         /// <summary>
         /// Resolve the game content directory from the executable's location so it's found whether OpenSO
-        /// is launched by the launcher or by double-clicking OpenSO.app (the working directory differs).
-        /// On macOS we ship a CODE-ONLY OpenSO.app; the game data + mutable content (MeshReplace, MeshCache,
+        /// is launched by the launcher or by double-clicking SmokyHollow.app (the working directory differs).
+        /// On macOS we ship a CODE-ONLY SmokyHollow.app; the game data + mutable content (MeshReplace, MeshCache,
         /// saves) live in the folder AROUND the .app, so codesign can seal the bundle and updates/remesh
         /// never touch it. Shows a readable error and exits if the content can't be found.
         /// </summary>
@@ -48,8 +48,8 @@ namespace FSO.Unix
         {
             var baseDir = AppContext.BaseDirectory; // dir holding the running apphost + managed DLLs
 
-            // Inside an .app bundle, the install dir is the folder that CONTAINS OpenSO.app.
-            var inBundle = Path.Combine("OpenSO.app", "Contents", "MacOS") + Path.DirectorySeparatorChar;
+            // Inside an .app bundle, the install dir is the folder that CONTAINS SmokyHollow.app.
+            var inBundle = Path.Combine("SmokyHollow.app", "Contents", "MacOS") + Path.DirectorySeparatorChar;
             int idx = baseDir.IndexOf(inBundle, StringComparison.Ordinal);
             string installDir = idx >= 0
                 ? baseDir.Substring(0, idx).TrimEnd(Path.DirectorySeparatorChar)
@@ -59,15 +59,15 @@ namespace FSO.Unix
             if (!Directory.Exists(contentDir))
             {
                 ShowDialog(
-                    "OpenSO couldn't find its game content.\n\nExpected it here:\n" + contentDir +
-                    "\n\nInstall or repair the game through the OpenSO launcher, then try again.",
+                    "Smoky Hollow couldn't find its game content.\n\nExpected it here:\n" + contentDir +
+                    "\n\nInstall or repair the game through the Smoky Hollow launcher, then try again.",
                     "Game content not found");
                 Environment.Exit(1);
             }
 
             // The content loader resolves several paths RELATIVE to the working directory — most importantly
             // Content.InitBasic scans a hardcoded "Content/", and FSOProgram.InitWithArguments sets
-            // FSOEnvironment.ContentDir = "Content/" (relative). When OpenSO.app is double-clicked the cwd is
+            // FSOEnvironment.ContentDir = "Content/" (relative). When SmokyHollow.app is double-clicked the cwd is
             // the bundle's Contents/MacOS, so "Content/" would resolve INSIDE the bundle (where there is no
             // Content). Point the cwd at the install dir so every relative game path resolves there instead.
             try { Directory.SetCurrentDirectory(installDir); } catch { /* best effort */ }
@@ -75,8 +75,8 @@ namespace FSO.Unix
             FSOEnvironment.ContentDir = contentDir + Path.DirectorySeparatorChar;
             FSOEnvironment.UserDir = contentDir + Path.DirectorySeparatorChar;
             FSOEnvironment.GFXContentDir = Path.Combine(contentDir, "OGL") + Path.DirectorySeparatorChar;
-            Console.WriteLine($"[OpenSO] Install directory: {installDir}");
-            Console.WriteLine($"[OpenSO] Content directory: {FSOEnvironment.ContentDir}");
+            Console.WriteLine($"[Smoky Hollow] Install directory: {installDir}");
+            Console.WriteLine($"[Smoky Hollow] Content directory: {FSOEnvironment.ContentDir}");
         }
 
         public static void InitUnix()
@@ -89,7 +89,7 @@ namespace FSO.Unix
 
         public static void ShowDialog(string text)
         {
-            ShowDialog(text, "OpenSO Message");
+            ShowDialog(text, "Smoky Hollow");
         }
 
         private static string Escape(string s) => s.Replace("\"", "\\\"");
@@ -130,7 +130,7 @@ namespace FSO.Unix
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             string title = e.ExceptionObject is OutOfMemoryException
-                ? "Out of Memory! OpenSO needs to close."
+                ? "Out of Memory! Smoky Hollow needs to close."
                 : "A fatal error occured! Screenshot this dialog and post it on Discord.";
 
             ShowDialog(e.ExceptionObject.ToString(), title);

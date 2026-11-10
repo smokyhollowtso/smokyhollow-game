@@ -1,0 +1,7 @@
+#!/bin/sh
+# One download for every Mac: start the copy of the launcher built for this Mac's chip.
+HERE="$(cd "$(dirname "$0")" && pwd)"
+if [ "$(sysctl -n hw.optional.arm64 2>/dev/null)" = "1" ]; then
+  exec "$HERE/SmokyHollowLauncher-arm64" "$@"
+fi
+exec "$HERE/SmokyHollowLauncher-x64" "$@"

@@ -1,0 +1,150 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SmokyHollow.Launcher.MainWindow"
+        Title="Smoky Hollow"
+        Icon="/Assets/smokyhollow.ico"
+        Width="1120" Height="720" MinWidth="940" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Bark}"
+        Foreground="{StaticResource Cream}">
+
+  <Grid RowDefinitions="Auto,*,Auto">
+
+    <!-- ===== Header plank ===== -->
+    <Border Grid.Row="0" Padding="24,12">
+      <Border.Background>
+        <ImageBrush Source="/Assets/plank.png" Stretch="UniformToFill" />
+      </Border.Background>
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <Image Source="/Assets/icon.png" Width="42" Height="42" />
+          <TextBlock Classes="brand" Text="SMOKY HOLLOW" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <Button Classes="wood" Content="Website" Click="OnWebsite" />
+          <Button Classes="wood" Content="Catalog" Click="OnCatalog" />
+          <Button Classes="gold" Content="Register" Click="OnShowRegister" Margin="6,0,0,0" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ===== Body ===== -->
+    <Grid Grid.Row="1" ColumnDefinitions="*,360" Margin="24,20,24,16">
+
+      <!-- Town map with the welcome sign -->
+      <Border Grid.Column="0" CornerRadius="14" BorderBrush="{StaticResource Frame}" BorderThickness="6" ClipToBounds="True">
+        <Panel>
+          <Image Source="/Assets/map.jpg" Stretch="UniformToFill" />
+
+          <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,28,0,0">
+            <Border Background="#4A3426" BorderBrush="#2B1E15" BorderThickness="4" CornerRadius="8" Padding="34,14"
+                    BoxShadow="0 8 18 0 #80000000">
+              <StackPanel Spacing="2">
+                <TextBlock Classes="kicker" Text="WELCOME TO" HorizontalAlignment="Center" />
+                <TextBlock Classes="sign" Text="SMOKY HOLLOW" />
+                <TextBlock Classes="kicker" Text="A SIMS ONLINE TOWN · EST. 2026" HorizontalAlignment="Center" />
+              </StackPanel>
+            </Border>
+            <Grid ColumnDefinitions="*,*" Width="180" Height="26">
+              <Border Grid.Column="0" Width="12" Background="#2B1E15" HorizontalAlignment="Center" />
+              <Border Grid.Column="1" Width="12" Background="#2B1E15" HorizontalAlignment="Center" />
+            </Grid>
+          </StackPanel>
+
+          <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="16"
+                  Background="#E62B2019" CornerRadius="10" Padding="16,12">
+            <StackPanel Spacing="3">
+              <StackPanel Orientation="Horizontal" Spacing="9">
+                <Ellipse x:Name="StatusDot" Width="11" Height="11" Fill="#8A7B66" VerticalAlignment="Center" />
+                <TextBlock x:Name="StatusText" Text="Checking on the town…" FontWeight="Bold" FontSize="16" />
+              </StackPanel>
+              <TextBlock x:Name="StatusDetail" Classes="muted" Text=" " />
+            </StackPanel>
+          </Border>
+        </Panel>
+      </Border>
+
+      <!-- Right column -->
+      <Grid Grid.Column="1" RowDefinitions="*,Auto" Margin="20,0,0,0">
+
+        <!-- Town board (news) -->
+        <Border x:Name="BoardPanel" Grid.Row="0" Classes="board">
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Classes="h2" Text="Town board" Margin="0,0,0,12" />
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+              <StackPanel x:Name="NewsList" Spacing="12" Margin="0,0,6,4" />
+            </ScrollViewer>
+          </DockPanel>
+        </Border>
+
+        <!-- Guest book (register) -->
+        <ThemeVariantScope Grid.Row="0" RequestedThemeVariant="Light">
+          <Border x:Name="RegisterPanel" Classes="cream" IsVisible="False">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+              <StackPanel Margin="0,0,6,0">
+                <TextBlock Classes="h2" Text="Sign the guest book" Foreground="#2B2019" />
+                <TextBlock Text="Make your Smoky Hollow account. Your sim's name comes later, in the game."
+                           TextWrapping="Wrap" FontSize="13" Margin="0,4,0,4" />
+
+                <TextBlock Classes="label" Text="Username" />
+                <TextBox x:Name="RegUser" MaxLength="24" />
+                <TextBlock Text="Lowercase letters, numbers and _ (3 to 24 characters)" FontSize="11" Foreground="#6B4A33" Margin="0,3,0,0" />
+
+                <TextBlock Classes="label" Text="Email" />
+                <TextBox x:Name="RegEmail" />
+
+                <TextBlock Classes="label" Text="Password" />
+                <TextBox x:Name="RegPass" PasswordChar="•" />
+
+                <TextBlock Classes="label" Text="Password again" />
+                <TextBox x:Name="RegPass2" PasswordChar="•" />
+
+                <TextBlock x:Name="RegKeyLabel" Classes="label" Text="Invite key" />
+                <TextBox x:Name="RegKey" />
+
+                <Button x:Name="RegSubmit" Classes="gold" Content="CREATE MY ACCOUNT" HorizontalAlignment="Stretch"
+                        Margin="0,16,0,0" Click="OnRegisterSubmit" />
+                <TextBlock x:Name="RegMessage" TextWrapping="Wrap" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,0" />
+                <Button Content="← Back to the town board" Click="OnShowBoard" Margin="0,8,0,0"
+                        Background="Transparent" Foreground="#6B4A33" BorderThickness="0" Padding="0,4" Cursor="Hand" />
+              </StackPanel>
+            </ScrollViewer>
+          </Border>
+        </ThemeVariantScope>
+
+        <!-- Hot spots -->
+        <Border Grid.Row="1" Classes="panel" Margin="0,16,0,0">
+          <StackPanel Spacing="8">
+            <TextBlock Classes="kicker" Text="HOT SPOTS" />
+            <StackPanel x:Name="HotSpotsList" Spacing="5" />
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Grid>
+
+    <!-- ===== Bottom bar ===== -->
+    <Border Grid.Row="2" Padding="24,14">
+      <Border.Background>
+        <ImageBrush Source="/Assets/plank.png" Stretch="UniformToFill" />
+      </Border.Background>
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel VerticalAlignment="Center" Spacing="8" Margin="0,0,24,0">
+          <TextBlock x:Name="ProgressText" Text="Loading…" FontSize="14" TextWrapping="Wrap" />
+          <ProgressBar x:Name="InstallBar" Minimum="0" Maximum="100" IsVisible="False" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <Button Classes="wood" Content="More ▾">
+            <Button.Flyout>
+              <MenuFlyout Placement="TopEdgeAlignedRight">
+                <MenuItem Header="Check for updates" Click="OnCheckUpdates" />
+                <MenuItem Header="Open the game folder" Click="OnOpenFolder" />
+                <MenuItem Header="Repair game files" Click="OnRepair" />
+              </MenuFlyout>
+            </Button.Flyout>
+          </Button>
+          <Button x:Name="MainButton" Classes="gold big" Content="…" IsEnabled="False" Click="OnMainButton" />
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

@@ -5,8 +5,8 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>FSO.Unix</RootNamespace>
-        <AssemblyName>OpenSO</AssemblyName>
-        <ApplicationIcon>openso.ico</ApplicationIcon>
+        <AssemblyName>SmokyHollow</AssemblyName>
+        <ApplicationIcon>smokyhollow.ico</ApplicationIcon>
         <!-- R2R precompile for release publishes, matching the Windows client â€” linux/osx players
              otherwise pay full JIT warmup at launch. Per-push CI overrides this off for speed. -->
         <PublishReadyToRun>true</PublishReadyToRun>
@@ -16,7 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="openso.ico" />
+        <Content Include="smokyhollow.ico" />
     </ItemGroup>
 
     <!-- MonoGame DesktopGL auto-loads an embedded "Icon.bmp" and calls SDL_SetWindowIcon at window
@@ -52,28 +52,28 @@
     <Target Name="_IncrementalCleanPublishDirectory" />
 
     <Target Name="CreateMacAppBundle" AfterTargets="Publish" Condition=" '$(RuntimeIdentifier)' == 'osx-arm64' or '$(RuntimeIdentifier)' == 'osx-x64' ">
-        <RemoveDir Directories="$(PublishDir)/OpenSO.app"/>
+        <RemoveDir Directories="$(PublishDir)/SmokyHollow.app"/>
         <Exec Command="sleep 1"/>
-        <MakeDir Directories="$(PublishDir)/OpenSO.app/Contents/MacOS"/>
-        <MakeDir Directories="$(PublishDir)/OpenSO.app/Contents/Resources"/>
+        <MakeDir Directories="$(PublishDir)/SmokyHollow.app/Contents/MacOS"/>
+        <MakeDir Directories="$(PublishDir)/SmokyHollow.app/Contents/Resources"/>
 
         <!-- CODE-ONLY bundle: the apphost + .NET runtime + managed DLLs go in Contents/MacOS. The game
              Content (and all mutable data â€” MeshReplace, MeshCache, saves, downloaded patches) deliberately
              stays in the folder AROUND the .app. This keeps the bundle immutable so codesign can seal it
              (the Content/*.dir folders were what broke signing) and so updates + the remesh pack never
              touch the signature. The game resolves Content from the .app's parent dir (see FSO.Unix/Program).
-             We then delete the now-duplicated bare runtime from the publish root, leaving OpenSO.app + Content. -->
+             We then delete the now-duplicated bare runtime from the publish root, leaving SmokyHollow.app + Content. -->
         <ItemGroup>
             <BundleCode Include="$(PublishDir)/**/*"
-                        Exclude="$(PublishDir)/OpenSO.app/**;$(PublishDir)/Content/**" />
+                        Exclude="$(PublishDir)/SmokyHollow.app/**;$(PublishDir)/Content/**" />
         </ItemGroup>
         <Copy SourceFiles="@(BundleCode)"
-              DestinationFiles="@(BundleCode->'$(PublishDir)/OpenSO.app/Contents/MacOS/%(RecursiveDir)%(Filename)%(Extension)')"
+              DestinationFiles="@(BundleCode->'$(PublishDir)/SmokyHollow.app/Contents/MacOS/%(RecursiveDir)%(Filename)%(Extension)')"
               SkipUnchangedFiles="true"/>
         <!-- Icon comes from the Liquid Glass openso.icon (compiled to Assets.car in CI, referenced via
              CFBundleIconName). No legacy .icns fallback â€” we don't ship the old FreeSO icon. -->
-        <Copy SourceFiles="Info.plist" DestinationFolder="$(PublishDir)/OpenSO.app/Contents"/>
-        <Exec Command="chmod +x &quot;$(PublishDir)/OpenSO.app/Contents/MacOS/OpenSO&quot;"/>
+        <Copy SourceFiles="Info.plist" DestinationFolder="$(PublishDir)/SmokyHollow.app/Contents"/>
+        <Exec Command="chmod +x &quot;$(PublishDir)/SmokyHollow.app/Contents/MacOS/SmokyHollow&quot;"/>
 
         <Delete Files="@(BundleCode)" />
     </Target>

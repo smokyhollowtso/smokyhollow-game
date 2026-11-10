@@ -1,0 +1,155 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SmokyHollow.Launcher.App"
+             RequestedThemeVariant="Dark">
+
+  <Application.Resources>
+    <SolidColorBrush x:Key="Bark" Color="#2B2019" />
+    <SolidColorBrush x:Key="Bark2" Color="#3A2B21" />
+    <SolidColorBrush x:Key="Edge" Color="#5A4130" />
+    <SolidColorBrush x:Key="Frame" Color="#3A281C" />
+    <SolidColorBrush x:Key="Cream" Color="#F4E9D2" />
+    <SolidColorBrush x:Key="Sand" Color="#D9CBB0" />
+    <SolidColorBrush x:Key="Gold" Color="#F2C46D" />
+    <SolidColorBrush x:Key="GoldDeep" Color="#B9852E" />
+    <SolidColorBrush x:Key="Pine" Color="#2F4A35" />
+    <!-- "BrandFont" is added in App.axaml.cs once we know whether the sign lettering is installed. -->
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+
+    <!-- Text -->
+    <Style Selector="TextBlock.brand">
+      <Setter Property="FontFamily" Value="{DynamicResource BrandFont}" />
+      <Setter Property="FontSize" Value="28" />
+    </Style>
+    <Style Selector="TextBlock.sign">
+      <Setter Property="FontFamily" Value="{DynamicResource BrandFont}" />
+      <Setter Property="FontSize" Value="46" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBlock.kicker">
+      <Setter Property="Foreground" Value="{StaticResource Gold}" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+    <Style Selector="TextBlock.h2">
+      <Setter Property="FontFamily" Value="{DynamicResource BrandFont}" />
+      <Setter Property="FontSize" Value="24" />
+    </Style>
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Foreground" Value="{StaticResource Sand}" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Wood panels -->
+    <Style Selector="Border.panel">
+      <Setter Property="Background" Value="{StaticResource Bark2}" />
+      <Setter Property="BorderBrush" Value="{StaticResource Edge}" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="16" />
+    </Style>
+    <Style Selector="Border.board">
+      <Setter Property="Background" Value="#5E412D" />
+      <Setter Property="BorderBrush" Value="{StaticResource Frame}" />
+      <Setter Property="BorderThickness" Value="6" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="16" />
+    </Style>
+    <Style Selector="Border.note">
+      <Setter Property="Background" Value="#F7F0DE" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="14,12" />
+      <Setter Property="BoxShadow" Value="0 4 10 0 #66000000" />
+    </Style>
+    <Style Selector="Border.note TextBlock">
+      <Setter Property="Foreground" Value="#2B2019" />
+    </Style>
+    <Style Selector="Border.note TextBlock.when">
+      <Setter Property="Foreground" Value="#6B4A33" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+    <Style Selector="Border.note TextBlock.title">
+      <Setter Property="FontFamily" Value="{DynamicResource BrandFont}" />
+      <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style Selector="Border.cream">
+      <Setter Property="Background" Value="{StaticResource Cream}" />
+      <Setter Property="BorderBrush" Value="{StaticResource Frame}" />
+      <Setter Property="BorderThickness" Value="6" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="18" />
+    </Style>
+    <Style Selector="Border.cream TextBlock">
+      <Setter Property="Foreground" Value="#2B2019" />
+    </Style>
+    <Style Selector="Border.cream TextBlock.label">
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Margin" Value="0,8,0,4" />
+    </Style>
+
+    <!-- Gold buttons (Register, Play) -->
+    <Style Selector="Button.gold">
+      <Setter Property="Background" Value="{StaticResource Gold}" />
+      <Setter Property="Foreground" Value="#2B1A08" />
+      <Setter Property="BorderBrush" Value="{StaticResource GoldDeep}" />
+      <Setter Property="BorderThickness" Value="0,0,0,4" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="20,9" />
+      <Setter Property="FontFamily" Value="{DynamicResource BrandFont}" />
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.gold:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#F7D48A" />
+      <Setter Property="Foreground" Value="#2B1A08" />
+      <Setter Property="BorderBrush" Value="{StaticResource GoldDeep}" />
+    </Style>
+    <Style Selector="Button.gold:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#E0B058" />
+      <Setter Property="Foreground" Value="#2B1A08" />
+    </Style>
+    <Style Selector="Button.gold:disabled /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#6B5A44" />
+      <Setter Property="Foreground" Value="#B8A98C" />
+      <Setter Property="BorderBrush" Value="#4A3D2E" />
+    </Style>
+    <Style Selector="Button.big">
+      <Setter Property="FontSize" Value="24" />
+      <Setter Property="MinWidth" Value="220" />
+      <Setter Property="MinHeight" Value="58" />
+    </Style>
+
+    <!-- Plain wood buttons in the header and bottom bar -->
+    <Style Selector="Button.wood">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource Cream}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="12,8" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.wood:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#4A3729" />
+      <Setter Property="Foreground" Value="{StaticResource Cream}" />
+    </Style>
+    <Style Selector="Button.wood:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#5A4130" />
+      <Setter Property="Foreground" Value="{StaticResource Cream}" />
+    </Style>
+
+    <Style Selector="ProgressBar">
+      <Setter Property="Foreground" Value="{StaticResource Gold}" />
+      <Setter Property="Background" Value="#4A3729" />
+      <Setter Property="Height" Value="10" />
+      <Setter Property="CornerRadius" Value="5" />
+    </Style>
+  </Application.Styles>
+</Application>
