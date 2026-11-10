@@ -13,17 +13,9 @@ name: Release OpenSO
 #   git tag dev-1 && git push origin dev-1
 # or run it manually from the Actions tab (workflow_dispatch), supplying the version.
 
+# Smoky Hollow builds with smokyhollow-release.yml. This OpenSO workflow only runs by hand.
 on:
-  push:
-    # Semver tags (vMAJOR.MINOR.PATCH) are the current scheme; legacy dev-/alpha-/beta- kept so old
-    # tags still resolve. version.txt is stamped from the tag, so the build self-reports e.g. v0.1.0.
-    tags: [ "v[0-9]*", "dev-*", "alpha-*", "beta-*" ]
   workflow_dispatch:
-    inputs:
-      version:
-        description: "Release version (e.g. v0.1.0). Used when run manually."
-        required: false
-        default: "v0.0.0"
 
 permissions:
   contents: write   # required to create the GitHub Release

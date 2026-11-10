@@ -5,14 +5,10 @@ name: Build OpenSO
 # not just at release time. Uploads the builds as artifacts for manual testing; does NOT cut a release
 # (that's release.yml, triggered by a dev-N tag).
 
+# Smoky Hollow builds with smokyhollow-release.yml. This OpenSO workflow only runs by hand.
 on:
-  push:
-    branches: [ "**" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
 
-# A newer push to the same branch obsoletes the in-flight run — cancel it instead of queueing a full
-# 7-job matrix behind it. Per-push CI only; release.yml must NEVER cancel (a release build is precious).
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
