@@ -9,9 +9,9 @@ namespace SmokyHollow.Launcher.Core;
 /// <summary>Everything the launcher does that isn't drawing the window.</summary>
 public sealed class LauncherCore
 {
-    public const string ManifestUrl = "https://smokyhollowtso.github.io/launcher.json";
-    public const string DefaultServer = "http://smokyhollowtso.duckdns.org:9000";
-    public const string DefaultWebsite = "https://smokyhollowtso.github.io/";
+    public const string ManifestUrl = "https://smokyhollowtso.com/launcher.json";
+    public const string DefaultServer = "https://play.smokyhollowtso.com";
+    public const string DefaultWebsite = "https://smokyhollowtso.com/";
     public const string DefaultCatalog = "https://www.tsomania.net/index.php";
     public const string DefaultTsoUrl = "https://archive.org/download/TheSimsOnline_201802/TSO.zip";
 

@@ -50,7 +50,7 @@
    </T>
 
    <T i="8192" n="Tuning - Skill Speed">
-      <K i="0" l="Base Speed [%]" v="101"></K> <!-- Smoky Hollow: DramaSO feel + 1 (was 10) -->
+      <K i="0" l="Base Speed [%]" v="95"></K> <!-- Smoky Hollow: solo in a stocked skill house shows ~149% like DramaSO (was 10) -->
       <K i="1" l="Payout Object Penalty [%x100]" v="-8000"></K>
       <K i="2" l="Maximum Total Bonus [%]" v="181"></K> <!-- Smoky Hollow (was 99) -->
       <K i="3" l="Payout Object Base [%]" v="0"></K>

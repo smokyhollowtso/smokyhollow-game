@@ -101,6 +101,16 @@ namespace FSO.SimAntics.Model
             return lackAtTarget - lackAtCurrent;
         }
 
+        /// <summary>
+        /// Smoky Hollow: lots that get a bigger item limit than their size allows, by map location.
+        /// The lot still gets its normal limit if that is ever higher (more roommates, a bigger lot).
+        /// The server and every player's game must have the same list, so changes ship in an update.
+        /// </summary>
+        public static readonly Dictionary<uint, int> SmokyHollowLotLimits = new Dictionary<uint, int>
+        {
+            { 13173026, 800 }, // Grindstone Oasis Store
+        };
+
         public static int GetObjectLimit(VM vm)
         {
             if (vm.TSOState.PropertyCategory == 255) return 10000;
@@ -109,7 +119,9 @@ namespace FSO.SimAntics.Model
             var lotSize = lotInfo.Size & 255;
             var lotFloors = (lotInfo.Size >> 8) & 255;
             var sizeMode = ObjectLimitPerPerson[lotSize + lotFloors];
-            return sizeMode * Math.Max(1, lotInfo.Roommates.Count);
+            var limit = sizeMode * Math.Max(1, lotInfo.Roommates.Count);
+            if (SmokyHollowLotLimits.TryGetValue(lotInfo.LotID, out var special)) limit = Math.Max(limit, special);
+            return limit;
         }
 
         public static int GetDiscountFor(ObjectCatalogItem item, VM vm)

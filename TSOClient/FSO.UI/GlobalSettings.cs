@@ -23,10 +23,13 @@ namespace FSO.Client
                         defaultInstance.ChatWindowsOpacity = 1; //sanity check
                     // Smoky Hollow: any FreeSO/OpenSO API endpoint (or an empty one) -> the Smoky Hollow server.
                     var entry = (defaultInstance.GameEntryUrl ?? "").Trim().TrimEnd('/');
-                    if (entry == "" || entry.Contains("api.freeso.org") || entry.Contains("api.openso.org"))
+                    // Also moves the old DuckDNS addresses to the town's own secure address: some internet providers (AT&T)
+                    // block logins that send a password unencrypted.
+                    if (entry == "" || entry.Contains("api.freeso.org") || entry.Contains("api.openso.org")
+                        || entry.Contains("smokyhollowtso.duckdns.org"))
                     {
-                        defaultInstance.GameEntryUrl = "http://smokyhollowtso.duckdns.org:9000";
-                        defaultInstance.CitySelectorUrl = "http://smokyhollowtso.duckdns.org:9000";
+                        defaultInstance.GameEntryUrl = "https://play.smokyhollowtso.com";
+                        defaultInstance.CitySelectorUrl = "https://play.smokyhollowtso.com";
                         defaultInstance.Save();
                     }
 
@@ -135,8 +138,8 @@ namespace FSO.Client
 
             { "UseCustomServer", "true" },
             { "ModernCAS", "true" },
-            { "GameEntryUrl", "http://smokyhollowtso.duckdns.org:9000" },
-            { "CitySelectorUrl", "http://smokyhollowtso.duckdns.org:9000" },
+            { "GameEntryUrl", "https://play.smokyhollowtso.com" },
+            { "CitySelectorUrl", "https://play.smokyhollowtso.com" },
 
             { "TargetRefreshRate", "60" },
 
