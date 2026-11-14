@@ -1,7 +1,7 @@
-name: Smoky Hollow Mac release
+name: Smoky Hollow release (Mac + Linux)
 
-# Builds the Mac version of Smoky Hollow (the game for Apple-chip and Intel Macs, plus the Mac launcher)
-# and posts them as a GitHub release. Run it from the Actions tab: "Smoky Hollow Mac release" → Run workflow.
+# Builds the Mac and Linux versions of Smoky Hollow (game + launcher) and posts them as a GitHub release.
+# Windows is built on Black Opal. Run it from the Actions tab: "Smoky Hollow release (Mac + Linux)" → Run workflow.
 on:
   workflow_dispatch:
     inputs:
@@ -79,6 +79,60 @@ jobs:
       - name: Fingerprints
         run: shasum -a 256 dist/*
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mac
+          path: dist/*
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build the game (Linux)
+        run: |
+          set -e
+          VERSION="${{ github.event.inputs.version }}"
+          mkdir -p dist
+          OUT=publish-linux
+          dotnet publish TSOClient/FSO.Unix -c Release -r linux-x64 --self-contained -o "$OUT"
+          test -f "$OUT/SmokyHollow" || { echo "::error::SmokyHollow was not built"; exit 1; }
+          chmod +x "$OUT/SmokyHollow"
+          printf '%s\n' "$VERSION" > "$OUT/version.txt"
+          ( cd "$OUT" && zip -qr "../dist/SmokyHollow-client-linux-x64.zip" . )
+
+      - name: Build the Linux launcher
+        run: |
+          set -e
+          dotnet publish Launcher/SmokyHollow.Launcher/SmokyHollow.Launcher.csproj -c Release -r linux-x64 --self-contained \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o launcher-linux
+          mkdir -p pack/SmokyHollow
+          cp launcher-linux/SmokyHollowLauncher pack/SmokyHollow/SmokyHollowLauncher
+          chmod +x pack/SmokyHollow/SmokyHollowLauncher
+          cp TSOClient/FSO.Unix/smokyhollow-1024.png pack/SmokyHollow/smokyhollow.png
+          tar -C pack -czf dist/SmokyHollowLauncher-linux.tar.gz SmokyHollow
+
+      - name: Fingerprints
+        run: sha256sum dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/*
+
+  release:
+    needs: [mac, linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
       - name: Post the release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -89,6 +143,6 @@ jobs:
             gh release upload "$TAG" dist/* --clobber -R "$GITHUB_REPOSITORY"
           else
             gh release create "$TAG" dist/* -R "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-              --title "Smoky Hollow for Mac ($TAG)" \
-              --notes "Smoky Hollow for Mac. Most people only need SmokyHollowLauncher-mac.zip; the launcher downloads everything else."
+              --title "Smoky Hollow for Mac and Linux ($TAG)" \
+              --notes "Smoky Hollow for Mac and Linux. Most people only need the launcher: SmokyHollowLauncher-mac.zip or SmokyHollowLauncher-linux.tar.gz. It downloads everything else."
           fi

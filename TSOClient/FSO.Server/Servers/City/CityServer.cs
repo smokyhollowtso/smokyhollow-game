@@ -126,6 +126,7 @@ namespace FSO.Server.Servers.City
             base.Bootstrap();
 
             Kernel.Get<EventSystem>().Init();
+            Kernel.Get<LotAllocations>().StartSmokyHollowKeepOpen(); // Smoky Hollow: 24/7 Store and Skill lots
         }
 
         public override void Shutdown()
@@ -137,6 +138,7 @@ namespace FSO.Server.Servers.City
         {
             Liveness.Stop();
             ShuttingDown = true;
+            Kernel.Get<LotAllocations>().StopSmokyHollowKeepOpen();
             var lotServers = Kernel.Get<LotServerPicker>();
             var task = lotServers.ShutdownAllLotServers(type);
             await Task.WhenAny(task, Task.Delay(30 * 1000)); //wait at most 30 seconds for a city server shutdown.

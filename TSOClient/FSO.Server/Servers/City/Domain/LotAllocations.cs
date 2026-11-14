@@ -27,6 +27,55 @@ namespace FSO.Server.Servers.City.Domain
         private JobMatchmaker Matchmaker;
         private IShardRealestateDomain Realestate;
 
+        /// <summary>
+        /// Smoky Hollow: Store and Skill lots are open 24/7. Any visitor the lot's admit rules allow
+        /// can open one, and it stays open when the owner and roommates leave.
+        /// </summary>
+        public static bool SmokyHollowAlwaysOpen(LotCategory category) =>
+            category == LotCategory.shopping || category == LotCategory.skills;
+
+        // Smoky Hollow: keep every Store and Skill lot hosted, so it shows open on the map and anyone
+        // can walk in even when nobody is inside. Checked once a minute; also reopens after a restart.
+        private Timer KeepOpenTimer;
+        private volatile bool KeepOpenStopped;
+
+        public void StartSmokyHollowKeepOpen()
+        {
+            KeepOpenStopped = false;
+            KeepOpenTimer = new Timer(_ => KeepOpenTick(), null, TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(60));
+        }
+
+        public void StopSmokyHollowKeepOpen()
+        {
+            KeepOpenStopped = true;
+            KeepOpenTimer?.Dispose();
+            KeepOpenTimer = null;
+        }
+
+        private void KeepOpenTick()
+        {
+            if (KeepOpenStopped) return;
+            try
+            {
+                List<uint> locations = new List<uint>();
+                using (var db = DAFactory.Get())
+                {
+                    foreach (var lot in db.Lots.All(Context.ShardId))
+                    {
+                        if (lot.owner_id != null && SmokyHollowAlwaysOpen(lot.category)) locations.Add(lot.location);
+                    }
+                }
+                foreach (var location in locations)
+                {
+                    if (KeepOpenStopped) return;
+                    var existing = _Locks.TryGetValue(location, out var alloc) ? alloc : null;
+                    if (existing != null) continue; // already open or opening
+                    try { TryFind(location, 0, true, null, true); } catch (Exception) { }
+                }
+            }
+            catch (Exception) { }
+        }
+
         private bool AllowGuestOpening => Context.Config.AllOpenable || (Context.Config.Archive?.Flags.HasFlag(FSO.Common.ArchiveConfigFlags.AllOpenable) ?? false);
 
         public LotAllocations(LotServerPicker PickingEngine, IDAFactory daFactory, CityServerContext context, IKernel kernel)
@@ -180,7 +229,7 @@ namespace FSO.Server.Servers.City.Domain
         /// <param name="openIfClosed"></param>
         /// <returns></returns>
 
-        private Task<TryFindLotResult> TryFind(uint lotId, uint avatarId, bool openIfClosed, ISecurityContext security)
+        private Task<TryFindLotResult> TryFind(uint lotId, uint avatarId, bool openIfClosed, ISecurityContext security, bool keepOpen = false)
         {
             bool jobLot = false;
             var originalId = lotId;
@@ -267,7 +316,7 @@ namespace FSO.Server.Servers.City.Domain
                                 }
                                 else
                                 {
-                                    if (avatarId != 0 && !AllowGuestOpening)
+                                    if (avatarId != 0 && !AllowGuestOpening && !SmokyHollowAlwaysOpen(lot.category))
                                     {
                                         var roomies = db.Roommates.GetLotRoommates(lot.lot_id);
                                         var modState = db.Avatars.GetModerationLevel(avatarId);
@@ -317,7 +366,7 @@ namespace FSO.Server.Servers.City.Domain
                                 });
                             }
                             allocation.SetLot(lot, (uint)Context.ShardId,
-                                (avatarId == 0) ? ClaimAction.LOT_CLEANUP : ClaimAction.LOT_HOST);
+                                (avatarId == 0 && !keepOpen) ? ClaimAction.LOT_CLEANUP : ClaimAction.LOT_HOST);
                         }
                         else { 
                             allocation.SetLot(new DbLot() { lot_id = (int)lotId }, originalId,

@@ -1149,7 +1149,8 @@ namespace FSO.Server.Servers.Lot.Domain
                     //this works around that possibility. 
                     var preTickAvatars = Lot.Context.ObjectQueries.AvatarsByPersist.Values.Select(x => x).ToList();
                     var noRoomies = !(preTickAvatars.Any(x => ((VMTSOAvatarState)x.TSOState).Permissions > VMTSOAvatarPermissions.Visitor)) 
-                        && (LotPersist.admit_mode < 4 && LotPersist.category != LotCategory.community) && !AllowGuestOpening;
+                        && (LotPersist.admit_mode < 4 && LotPersist.category != LotCategory.community) && !AllowGuestOpening
+                        && !FSO.Server.Servers.City.Domain.LotAllocations.SmokyHollowAlwaysOpen(LotPersist.category);
 
                     try
                     {
@@ -1192,7 +1193,15 @@ namespace FSO.Server.Servers.Lot.Domain
                         }
                     }
 
-                    if (noRemainingUsers)
+                    // Smoky Hollow: Store and Skill lots stay hosted (lit on the map) even when empty.
+                    var smokyKeepOpen = noRemainingUsers && !ShuttingDown && Context.Action == ClaimAction.LOT_HOST
+                        && FSO.Server.Servers.City.Domain.LotAllocations.SmokyHollowAlwaysOpen(LotPersist.category);
+
+                    if (smokyKeepOpen)
+                    {
+                        TimeToShutdown = -1;
+                    }
+                    else if (noRemainingUsers)
                     {
                         if (TimeToShutdown == -1)
                         {
