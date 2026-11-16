@@ -481,7 +481,7 @@ namespace FSO.SimAntics.Primitives
                         //  Other lots: owner/roommates skill with a hard cap of 97%; guests get 0%,
                         //  except new neighbors (account <= 14 days) on Welcome lots (7), who get skill-lot speed +10%.
                         var cat = context.VM.TSOState.PropertyCategory;
-                        if (cat == 6) break;
+                        if (cat == 6) return VMPrimitiveExitCode.GOTO_TRUE;
                         var speed = context.Thread.TempRegisters[0];
                         var shState = (context.Caller as VMAvatar)?.TSOState as VMTSOAvatarState;
                         if (shState != null && shState.Permissions >= VMTSOAvatarPermissions.Roommate)
@@ -493,7 +493,7 @@ namespace FSO.SimAntics.Primitives
                             context.Thread.TempRegisters[0] = (short)Math.Min(32767, speed * 144 / 100); // Skill lot boost (131%, skillobjects tuning 8192:4) +10%
                         }
                         else context.Thread.TempRegisters[0] = 0;
-                        break;
+                        return VMPrimitiveExitCode.GOTO_TRUE;
                     }
                 case VMGenericTSOCallMode.SHPayoutRule:
                     {
@@ -503,7 +503,7 @@ namespace FSO.SimAntics.Primitives
                         var shPay = (context.Caller as VMAvatar)?.TSOState as VMTSOAvatarState;
                         context.Thread.TempRegisters[0] = (short)((context.VM.TSOState.PropertyCategory == 7 && shPay != null
                             && shPay.Flags.HasFlag(VMTSOAvatarFlags.SHNewNeighbor)) ? 150 : 100);
-                        break;
+                        return VMPrimitiveExitCode.GOTO_TRUE;
                     }
                 case VMGenericTSOCallMode.FSOShowCheckTreeTooltipTemp0Temp1:
                     {
