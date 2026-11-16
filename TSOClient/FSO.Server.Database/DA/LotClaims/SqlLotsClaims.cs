@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System;
+using Dapper;
 using FSO.Common.Enum;
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
@@ -82,15 +83,17 @@ namespace FSO.Server.Database.DA.LotClaims
 
         public List<DbLotStatus> Top100Filter(int shard_id, LotCategory category, int limit)
         {
-            return Context.Connection.Query<DbLotStatus>("SELECT b.location AS location, active " +
+            // Smoky Hollow: lots kept open 24/7 are listed even when nobody is inside.
+            string open247 = "b.sh_always_open = 1";
+            return Context.Connection.Query<DbLotStatus>("SELECT b.location AS location, COALESCE(c.active, 0) AS active " +
             "FROM fso_lot_claims AS a " +
             "JOIN fso_lots AS b " +
             "ON a.lot_id = b.lot_id " +
-            "JOIN(SELECT location, COUNT(*) as active FROM fso_avatar_claims GROUP BY location) AS c " +
+            "LEFT JOIN (SELECT location, COUNT(*) as active FROM fso_avatar_claims GROUP BY location) AS c " +
             "ON b.location = c.location WHERE a.shard_id = @shard_id " +
-            "AND category = @category AND active > 0 " +
+            "AND category = @category AND (c.active > 0 OR " + open247 + ") " +
             "ORDER BY active DESC " +
-            "LIMIT @limit", new { shard_id = shard_id, category = category.ToString(), limit = limit }).ToList();
+            "LIMIT @limit", new { shard_id = shard_id, category = category.ToString(), limit = Math.Max(limit, 30) }).ToList();
         }
 
         public List<uint> RecentsFilter(uint avatar_id, int limit)

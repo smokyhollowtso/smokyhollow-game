@@ -1150,7 +1150,7 @@ namespace FSO.Server.Servers.Lot.Domain
                     var preTickAvatars = Lot.Context.ObjectQueries.AvatarsByPersist.Values.Select(x => x).ToList();
                     var noRoomies = !(preTickAvatars.Any(x => ((VMTSOAvatarState)x.TSOState).Permissions > VMTSOAvatarPermissions.Visitor)) 
                         && (LotPersist.admit_mode < 4 && LotPersist.category != LotCategory.community) && !AllowGuestOpening
-                        && !FSO.Server.Servers.City.Domain.LotAllocations.SmokyHollowAlwaysOpen(LotPersist.category);
+                        && !FSO.Server.Servers.City.Domain.LotAllocations.IsKeptOpen(LotPersist.lot_id);
 
                     try
                     {
@@ -1195,7 +1195,7 @@ namespace FSO.Server.Servers.Lot.Domain
 
                     // Smoky Hollow: Store and Skill lots stay hosted (lit on the map) even when empty.
                     var smokyKeepOpen = noRemainingUsers && !ShuttingDown && Context.Action == ClaimAction.LOT_HOST
-                        && FSO.Server.Servers.City.Domain.LotAllocations.SmokyHollowAlwaysOpen(LotPersist.category);
+                        && FSO.Server.Servers.City.Domain.LotAllocations.IsKeptOpen(LotPersist.lot_id);
 
                     if (smokyKeepOpen)
                     {
@@ -1930,6 +1930,10 @@ namespace FSO.Server.Servers.Lot.Domain
 
             if (rage < 7)
                 state.AvatarFlags |= VMTSOAvatarFlags.NewPlayer;
+
+            // Smoky Hollow: new neighbors (account 14 days old or less) skill at Skill-lot speed on Welcome lots
+            if (rage <= 14)
+                state.AvatarFlags |= VMTSOAvatarFlags.SHNewNeighbor;
 
             state.Permissions = GetAvatarPermissions(avatar, myRoomieLots);
 

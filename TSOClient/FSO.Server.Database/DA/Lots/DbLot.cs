@@ -23,6 +23,10 @@ namespace FSO.Server.Database.DA.Lots
 
         public byte thumb3d_dirty { get; set; }
         public uint thumb3d_time { get; set; }
+
+        // Smoky Hollow 24/7 switch (column fso_lots.sh_always_open):
+        // 1 = stays open 24/7; 0 or empty (NULL) = normal open/close
+        public bool? sh_always_open { get; set; }
     }
 
     /**Lot

@@ -39,10 +39,15 @@ namespace FSO.Server.Servers.City.Domain
         private Timer KeepOpenTimer;
         private volatile bool KeepOpenStopped;
 
+        // lot_ids that should stay open right now (only lots whose 24/7 switch is set to 1)
+        private static System.Collections.Concurrent.ConcurrentDictionary<int, byte> KeptOpen = new System.Collections.Concurrent.ConcurrentDictionary<int, byte>();
+        public static bool IsKeptOpen(int lotId) => KeptOpen.ContainsKey(lotId);
+        public static bool KeepsOpen(DbLot lot) => lot != null && (lot.owner_id != null || lot.category == LotCategory.community) && lot.sh_always_open == true;
+
         public void StartSmokyHollowKeepOpen()
         {
             KeepOpenStopped = false;
-            KeepOpenTimer = new Timer(_ => KeepOpenTick(), null, TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(60));
+            KeepOpenTimer = new Timer(_ => KeepOpenTick(), null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(60));
         }
 
         public void StopSmokyHollowKeepOpen()
@@ -58,13 +63,16 @@ namespace FSO.Server.Servers.City.Domain
             try
             {
                 List<uint> locations = new List<uint>();
+                var keep = new HashSet<int>();
                 using (var db = DAFactory.Get())
                 {
                     foreach (var lot in db.Lots.All(Context.ShardId))
                     {
-                        if (lot.owner_id != null && SmokyHollowAlwaysOpen(lot.category)) locations.Add(lot.location);
+                        if (KeepsOpen(lot)) { locations.Add(lot.location); keep.Add(lot.lot_id); }
                     }
                 }
+                foreach (var id in keep) KeptOpen[id] = 1;
+                foreach (var id in KeptOpen.Keys) if (!keep.Contains(id)) KeptOpen.TryRemove(id, out _);
                 foreach (var location in locations)
                 {
                     if (KeepOpenStopped) return;
@@ -316,7 +324,7 @@ namespace FSO.Server.Servers.City.Domain
                                 }
                                 else
                                 {
-                                    if (avatarId != 0 && !AllowGuestOpening && !SmokyHollowAlwaysOpen(lot.category))
+                                    if (avatarId != 0 && !AllowGuestOpening && !KeepsOpen(lot))
                                     {
                                         var roomies = db.Roommates.GetLotRoommates(lot.lot_id);
                                         var modState = db.Avatars.GetModerationLevel(avatarId);

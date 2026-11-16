@@ -85,6 +85,10 @@
         FSOSetStackObjectTransient = 139,
         FSOIsStackObjectPendingRoommateDeletion = 140,
         FSOIsStackObjectAllowedByLotCategory = 141,
-        FSOShowCheckTreeTooltipTemp0Temp1 = 142
+        FSOShowCheckTreeTooltipTemp0Temp1 = 142,
+
+        //Smoky Hollow
+        SHSkillSpeedRule = 200, //temp0 = skill speed %, returns it adjusted for this lot (see VMGenericTSOCall)
+        SHPayoutRule = 201 //returns payout % for this Sim and lot in temp0 (see VMGenericTSOCall)
     }
 }

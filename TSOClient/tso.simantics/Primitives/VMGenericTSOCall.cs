@@ -474,6 +474,37 @@ namespace FSO.SimAntics.Primitives
                         var gobj = context.StackObject as VMGameObject;
                         return (gobj != null && !gobj.Disabled.HasFlag(VMGameObjectDisableFlags.LotCategoryWrong)) ? VMPrimitiveExitCode.GOTO_TRUE : VMPrimitiveExitCode.GOTO_FALSE;
                     }
+                case VMGenericTSOCallMode.SHSkillSpeedRule:
+                    {
+                        // Smoky Hollow skill speed rules. temp0 = speed % from the skill globals; we adjust it here.
+                        //  Skill lots (6): everyone, full speed (bonuses and the skill lot multiplier apply).
+                        //  Other lots: owner/roommates skill with a hard cap of 97%; guests get 0%,
+                        //  except new neighbors (account <= 14 days) on Welcome lots (7), who get skill-lot speed +10%.
+                        var cat = context.VM.TSOState.PropertyCategory;
+                        if (cat == 6) break;
+                        var speed = context.Thread.TempRegisters[0];
+                        var shState = (context.Caller as VMAvatar)?.TSOState as VMTSOAvatarState;
+                        if (shState != null && shState.Permissions >= VMTSOAvatarPermissions.Roommate)
+                        {
+                            if (speed > 97) context.Thread.TempRegisters[0] = 97;
+                        }
+                        else if (cat == 7 && shState != null && shState.Flags.HasFlag(VMTSOAvatarFlags.SHNewNeighbor))
+                        {
+                            context.Thread.TempRegisters[0] = (short)Math.Min(32767, speed * 144 / 100); // Skill lot boost (131%, skillobjects tuning 8192:4) +10%
+                        }
+                        else context.Thread.TempRegisters[0] = 0;
+                        break;
+                    }
+                case VMGenericTSOCallMode.SHPayoutRule:
+                    {
+                        // Smoky Hollow: returns the payout % in temp0 for money objects on non-Money lots.
+                        // New neighbors (account <= 14 days) on Welcome lots (7) earn 150%; everyone else 100%.
+                        // (Money lots get their 125% from skillobjects tuning 8196:6.)
+                        var shPay = (context.Caller as VMAvatar)?.TSOState as VMTSOAvatarState;
+                        context.Thread.TempRegisters[0] = (short)((context.VM.TSOState.PropertyCategory == 7 && shPay != null
+                            && shPay.Flags.HasFlag(VMTSOAvatarFlags.SHNewNeighbor)) ? 150 : 100);
+                        break;
+                    }
                 case VMGenericTSOCallMode.FSOShowCheckTreeTooltipTemp0Temp1:
                     {
                         // Show the string in STR#[temp 0][temp 1] as a tooltip for this object on hover.
