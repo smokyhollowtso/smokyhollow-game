@@ -483,16 +483,35 @@ namespace FSO.SimAntics.Primitives
                         var cat = context.VM.TSOState.PropertyCategory;
                         if (cat == 6) return VMPrimitiveExitCode.GOTO_TRUE;
                         var speed = context.Thread.TempRegisters[0];
-                        var shState = (context.Caller as VMAvatar)?.TSOState as VMTSOAvatarState;
+                        // The skiller is usually the caller; fall back to the stack object if the caller is the skill object.
+                        var shAvatar = (context.Caller as VMAvatar) ?? (context.StackObject as VMAvatar);
+                        var shState = shAvatar?.TSOState as VMTSOAvatarState;
+                        string shWhy;
                         if (shState != null && shState.Permissions >= VMTSOAvatarPermissions.Roommate)
                         {
                             if (speed > 97) context.Thread.TempRegisters[0] = 97;
+                            shWhy = "owner/roommate";
                         }
                         else if (cat == 7 && shState != null && shState.Flags.HasFlag(VMTSOAvatarFlags.SHNewNeighbor))
                         {
                             context.Thread.TempRegisters[0] = (short)Math.Min(32767, speed * 144 / 100); // Skill lot boost (131%, skillobjects tuning 8192:4) +10%
+                            shWhy = "new neighbor on Welcome lot";
                         }
-                        else context.Thread.TempRegisters[0] = 0;
+                        else
+                        {
+                            context.Thread.TempRegisters[0] = 0;
+                            shWhy = (shState == null) ? "no sim found" : "guest";
+                        }
+                        if (context.VM.GlobalLink != null)
+                        {
+                            // Smoky Hollow: one line in the server window whenever a sim's skill speed changes, to check the lot rules.
+                            var shKey = (shAvatar?.PersistID ?? 0) + ":" + context.Thread.TempRegisters[0];
+                            lock (SHSpeedLog)
+                            {
+                                if (SHSpeedLog.Add(shKey))
+                                    Console.WriteLine($"[SkillRule] {shAvatar?.Name ?? "?"} lot category {cat}, flags {shState?.Flags}, permissions {shState?.Permissions}, base {speed}% -> {context.Thread.TempRegisters[0]}% ({shWhy})");
+                            }
+                        }
                         return VMPrimitiveExitCode.GOTO_TRUE;
                     }
                 case VMGenericTSOCallMode.SHPayoutRule:
@@ -500,7 +519,7 @@ namespace FSO.SimAntics.Primitives
                         // Smoky Hollow: returns the payout % in temp0 for money objects on non-Money lots.
                         // New neighbors (account <= 14 days) on Welcome lots (7) earn 150%; everyone else 100%.
                         // (Money lots get their 125% from skillobjects tuning 8196:6.)
-                        var shPay = (context.Caller as VMAvatar)?.TSOState as VMTSOAvatarState;
+                        var shPay = ((context.Caller as VMAvatar) ?? (context.StackObject as VMAvatar))?.TSOState as VMTSOAvatarState;
                         context.Thread.TempRegisters[0] = (short)((context.VM.TSOState.PropertyCategory == 7 && shPay != null
                             && shPay.Flags.HasFlag(VMTSOAvatarFlags.SHNewNeighbor)) ? 150 : 100);
                         return VMPrimitiveExitCode.GOTO_TRUE;
@@ -534,6 +553,8 @@ namespace FSO.SimAntics.Primitives
                     return VMPrimitiveExitCode.GOTO_TRUE;
             }
         }
+
+        private static readonly HashSet<string> SHSpeedLog = new HashSet<string>();
 
         private uint GetOwnerID(VMEntity obj, VMStackFrame context)
         {
