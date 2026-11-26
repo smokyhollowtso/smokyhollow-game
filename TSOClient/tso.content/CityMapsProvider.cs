@@ -35,7 +35,7 @@ namespace FSO.Content
             foreach (var map in Directory.GetDirectories(dir))
             {
                 var id = int.Parse(Path.GetFileName(map).Replace("city_", ""));
-                DirCache.Add(id, map);
+                DirCache[id] = map; // Smoky Hollow: a city in Content/Cities replaces the TSO one with the same number (our edited map 0007)
             }
         }
 

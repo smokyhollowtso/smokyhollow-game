@@ -22,6 +22,16 @@ namespace FSO.Content
         public Dictionary<ushort, FloorReference> Entries;
         public IContentProvider<IffFile> Floors;
         public Dictionary<string, ushort> DynamicFloorFromID;
+        // Smoky Hollow: custom floors from Content/Floors/*.flr, numbered after EA's floors
+        private Dictionary<string, IffFile> CustomFloors = new Dictionary<string, IffFile>();
+
+        private IffFile GetFloorIff(string fileName)
+        {
+            if (CustomFloors.TryGetValue(fileName, out var custom)) return custom;
+            if (this.Floors is FAR1Provider<IffFile>)
+                return ((FAR1Provider<IffFile>)this.Floors).ThrowawayGet(fileName);
+            return this.Floors.Get(fileName);
+        }
 
         private IffFile FloorGlobals;
         private IffFile BuildGlobals;
@@ -229,6 +239,32 @@ namespace FSO.Content
                 archive.Close();
             }
 
+            // Smoky Hollow custom floors: always added after EA's, sorted by file name, so their numbers stay the same.
+            var customDir = System.IO.Path.Combine(FSO.Common.FSOEnvironment.ContentDir, "Floors");
+            if (System.IO.Directory.Exists(customDir))
+            {
+                var files = System.IO.Directory.GetFiles(customDir, "*.flr");
+                System.Array.Sort(files, System.StringComparer.OrdinalIgnoreCase);
+                foreach (var file in files)
+                {
+                    var name = System.IO.Path.GetFileName(file).ToLowerInvariant();
+                    var iff = new IffFile(file);
+                    var catStrings = iff.Get<STR>(0);
+                    CustomFloors[name] = iff;
+                    DynamicFloorFromID[System.IO.Path.GetFileNameWithoutExtension(name)] = floorID;
+                    Entries.Add(floorID, new FloorReference(this)
+                    {
+                        ID = floorID,
+                        FileName = name,
+                        Hardness = HardnessFromChunkName(iff.GetLabel<SPR2>(1)),
+                        Name = catStrings.GetString(0),
+                        Price = int.Parse(catStrings.GetString(1)),
+                        Description = catStrings.GetString(2)
+                    });
+                    floorID++;
+                }
+            }
+
             NumFloors = floorID;
             var far1 = new FAR1Provider<IffFile>(ContentManager, new IffCodec(), new Regex(".*/floors.*\\.far"));
             this.Floors = far1;
@@ -265,11 +301,7 @@ namespace FSO.Content
             }
             else
             {
-                IffFile iff;
-                if (this.Floors is FAR1Provider<IffFile>)
-                    iff = ((FAR1Provider<IffFile>)this.Floors).ThrowawayGet(Entries[(ushort)id].FileName);
-                else
-                    iff = this.Floors.Get(Entries[(ushort)id].FileName);
+                IffFile iff = GetFloorIff(Entries[(ushort)id].FileName);
 
                 var spr = iff?.Get<SPR2>(513);
                 if (spr != null) spr.FloorCopy = 1;
@@ -306,7 +338,8 @@ namespace FSO.Content
             {
                 //get from iff
                 if (!Entries.ContainsKey((ushort)id)) return null;
-                IffFile iff = this.Floors.Get(Entries[(ushort)id].FileName);
+                var fileName = Entries[(ushort)id].FileName;
+                IffFile iff = CustomFloors.TryGetValue(fileName, out var custom) ? custom : this.Floors.Get(fileName);
                 if (iff == null) return null;
 
                 var far = iff.Get<SPR2>(1);

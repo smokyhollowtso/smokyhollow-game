@@ -70,6 +70,12 @@ namespace FSO.Client.Rendering.City
                 ext = "png";
                 CityStr = Path.Combine(FSOEnvironment.ContentDir, "Cities/", CityStr);
             }
+            else if (Directory.Exists(Path.Combine(FSOEnvironment.ContentDir, "Cities/", CityStr)))
+            {
+                // Smoky Hollow: our edited copy of a TSO map in Content/Cities wins over the original
+                CityStr = Path.Combine(FSOEnvironment.ContentDir, "Cities/", CityStr);
+                if (!File.Exists(Path.Combine(CityStr, "elevation.bmp"))) ext = "png";
+            }
             else
             {
                 CityStr = gamepath + "cities/" + CityStr;
