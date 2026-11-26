@@ -19,7 +19,8 @@ permissions:
 
 jobs:
   mac:
-    runs-on: macos-15
+    # Intel Mac machine: Apple-chip ones are often all busy. It still builds both Mac versions.
+    runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v5
 
