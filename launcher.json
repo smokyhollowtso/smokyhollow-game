@@ -1,0 +1,93 @@
+{
+  "server": "https://play.smokyhollowtso.com",
+  "website": "https://smokyhollowtso.com/",
+  "catalog": "https://www.tsomania.net/index.php",
+  "tsoUrl": "https://archive.org/download/TheSimsOnline_201802/TSO.zip",
+  "client": {
+    "version": "v0.4.3-sh13",
+    "windows": {
+      "url": "https://github.com/smokyhollowtso/smokyhollowtso.github.io/releases/download/v0.4.3-sh13/SmokyHollow-client-win-x64.zip",
+      "exe": "SmokyHollow.exe"
+    },
+    "macArm64": {
+      "url": "https://github.com/smokyhollowtso/smokyhollow-game/releases/download/v0.4.3-sh13/SmokyHollow-client-osx-arm64.zip",
+      "exe": "SmokyHollow.app/Contents/MacOS/SmokyHollow"
+    },
+    "macX64": {
+      "url": "https://github.com/smokyhollowtso/smokyhollow-game/releases/download/v0.4.3-sh13/SmokyHollow-client-osx-x64.zip",
+      "exe": "SmokyHollow.app/Contents/MacOS/SmokyHollow"
+    },
+    "linux": {
+      "url": "https://github.com/smokyhollowtso/smokyhollow-game/releases/download/v0.4.3-sh13/SmokyHollow-client-linux-x64.zip",
+      "exe": "SmokyHollow"
+    }
+  },
+  "news": [
+    {
+      "date": "Nov 26, 2026",
+      "title": "Floors, wallpaper and the Living Library",
+      "body": "Ten new Smoky Hollow floors and seventeen old-time wallpapers are at the bottom of the Build mode lists: florals, ticking stripes, damask, knotty pine and wainscoting. New in the catalog: The Living Library, an old hollow tree full of books to skill with; the Partners Writing Desk; the Ornate Pedestal and Floral Gilded side tables; three new lamps (the Dragon Lantern Post, the Hollow Road Lantern Post and the Celestial Sphere Lamp); two Halloween gnomes and the Autumn Stump Sitter; and the Pest Motel, for anyone ready to pay for a roach-free house. The little solo island is flat now, so there's room to build. Press UPDATE in the launcher to get it.",
+      "tag": "gold"
+    },
+    {
+      "date": "Nov 23, 2026",
+      "title": "Lamplight and a whiskey bar",
+      "body": "New in the catalog: the Moonshiner's Whiskey Bar, a carved back bar stocked with whiskey and moonshine for your lodge, the Stallion Crest Dining Chair and the Elk Ridge Floor Lamp. And keep an eye out this Christmas... Press UPDATE in the launcher to get it.",
+      "tag": "gold"
+    },
+    {
+      "date": "Nov 18, 2026",
+      "title": "Join us on Discord",
+      "body": "Smoky Hollow has a Discord! Ask for an invite code, share screenshots, show off your lot and report bugs: https://discord.gg/TBDPMAWUzk",
+      "tag": "gold"
+    },
+    {
+      "date": "Nov 17, 2026",
+      "title": "Wagons roll into town",
+      "body": "Two pioneer wagons are in the catalog under Decorative: the canvas-topped Covered Wagon and the loaded-up Cargo Wagon. Park one out front of the lodge. Press UPDATE in the launcher to get them.",
+      "tag": "gold"
+    },
+    {
+      "date": "Nov 16, 2026",
+      "title": "The howling wolf fountain",
+      "body": "A two-tier fountain with a howling timber wolf and running water is in the catalog under Decorative. Splash in it or toss a coin and make a wish. This update also fixes skill speeds on Windows. Press UPDATE in the launcher to get it.",
+      "tag": "gold"
+    },
+    {
+      "date": "Nov 15, 2026",
+      "title": "The lodge is open",
+      "body": "New in the catalog: bronze statues of Davy Crockett, Daniel Boone and John Sevier, a black bear and cub, bear and turkey mounts, crossed rifles, a coat rack and an antler lantern sconce. Old Man Harlan will swap tales with you when you're lonesome. Skill with the Lodge Bookshelf, Chess Table and Wall Mirror, and three new tip jars. Skill lots are the place to skill, money lots pay more, and new neighbors get a head start on Welcome lots. Press UPDATE in the launcher to get it.",
+      "tag": "gold"
+    },
+    {
+      "date": "Nov 14, 2026",
+      "title": "Wall art and lots that never close",
+      "body": "Eight Smoky Hollow paintings are in the buy catalog under Decorative: Davy Crockett, Devil Anse Hatfield, Randolph McCoy, Billy the Kid, Daniel Boone, old maps of Tennessee and North Carolina, and a Smokies sunset. Store and skill lots now stay open around the clock. Linux players can join in too. Press UPDATE in the launcher to get it.",
+      "tag": "gold"
+    },
+    {
+      "date": "Nov 11, 2026",
+      "title": "Skill together, skill faster",
+      "body": "Skill speeds now match the classic feel: about 149% skilling alone at a skill house, and every friend who joins speeds everyone up. Press UPDATE in the launcher to get it, along with a new start screen and safer logins.",
+      "tag": "gold"
+    },
+    {
+      "date": "Nov 9, 2026",
+      "title": "Smoky Hollow is on the Mac",
+      "body": "Mac neighbors can grab the launcher from the website's Trading Post. It works on Apple-chip and Intel Macs.",
+      "tag": "blue"
+    },
+    {
+      "date": "Nov 8, 2026",
+      "title": "Smoky Hollow opens for testing",
+      "body": "The first homestead is up on Grindstone Oasis and the jam stand is paying out.",
+      "tag": "red"
+    },
+    {
+      "date": "Wanted",
+      "title": "Neighbors",
+      "body": "Our first testers are moving in soon. Plenty of room by the creek.",
+      "tag": "green"
+    }
+  ]
+}
