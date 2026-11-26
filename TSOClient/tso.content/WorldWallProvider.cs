@@ -32,6 +32,16 @@ namespace FSO.Content
         public Dictionary<ushort, WallReference> Entries;
 
         public IContentProvider<IffFile> Walls;
+        // Smoky Hollow: custom wallpapers from Content/Walls/*.wll, numbered after EA's wallpapers
+        private Dictionary<string, IffFile> CustomWalls = new Dictionary<string, IffFile>();
+
+        private IffFile GetWallIff(string fileName)
+        {
+            if (CustomWalls.TryGetValue(fileName, out var custom)) return custom;
+            if (this.Walls is FAR1Provider<IffFile>)
+                return ((FAR1Provider<IffFile>)this.Walls).ThrowawayGet(fileName);
+            return this.Walls.Get(fileName);
+        }
 
         public int NumWalls;
 
@@ -278,6 +288,32 @@ namespace FSO.Content
                 archive.Close();
             }
 
+            // Smoky Hollow custom wallpapers: always added after EA's, sorted by file name, so their numbers stay the same.
+            var customDir = Path.Combine(FSO.Common.FSOEnvironment.ContentDir, "Walls");
+            if (Directory.Exists(customDir))
+            {
+                var files = Directory.GetFiles(customDir, "*.wll");
+                Array.Sort(files, StringComparer.OrdinalIgnoreCase);
+                foreach (var file in files)
+                {
+                    var name = Path.GetFileName(file).ToLowerInvariant();
+                    var iff = new IffFile(file);
+                    var catStrings = iff.Get<STR>(0);
+                    CustomWalls[name] = iff;
+                    DynamicWallFromID[Path.GetFileNameWithoutExtension(name)] = wallID;
+                    Entries.Add(wallID, new WallReference(this)
+                    {
+                        ID = wallID,
+                        FileName = name,
+
+                        Name = catStrings.GetString(0),
+                        Price = int.Parse(catStrings.GetString(1)),
+                        Description = catStrings.GetString(2)
+                    });
+                    wallID++;
+                }
+            }
+
             var far1 = new FAR1Provider<IffFile>(ContentManager, new IffCodec(), new Regex(".*/walls.*\\.far"));
             far1.Init();
             Walls = far1;
@@ -334,11 +370,7 @@ namespace FSO.Content
             }
             else
             {
-                IffFile iff;
-                if (this.Walls is FAR1Provider<IffFile>)
-                    iff = ((FAR1Provider<IffFile>)this.Walls).ThrowawayGet(Entries[(ushort)id].FileName);
-                else
-                    iff = this.Walls.Get(Entries[(ushort)id].FileName);
+                IffFile iff = GetWallIff(Entries[(ushort)id].FileName);
                 var spr = iff.Get<SPR>(1793);
                 return (spr == null)?null:spr.Frames[2].GetTexture(device);
             }
@@ -363,7 +395,7 @@ namespace FSO.Content
                 //get from iff
                 WallReference entry = null;
                 if (!Entries.TryGetValue((ushort)id, out entry)) entry = Entries.Values.First(x => x.ID > 255);
-                IffFile iff = this.Walls.Get(entry.FileName);
+                IffFile iff = CustomWalls.TryGetValue(entry.FileName, out var custom) ? custom : this.Walls.Get(entry.FileName);
                 if (iff == null) return null;
 
                 var far = iff.Get<SPR>(1);
